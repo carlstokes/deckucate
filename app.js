@@ -10,7 +10,7 @@ const languages = [
   ['es-ES', 'Spanish (Spain)'], ['es-MX', 'Spanish (Mexico)'],
   ['fr-FR', 'French'], ['de-DE', 'German'], ['it-IT', 'Italian']
 ];
-const state = { decks: [], deck: null, direction: 0, order: [], position: 0, flipped: false, filePurpose: 'add' };
+const state = { decks: [], deck: null, direction: 0, sessionSpeed: 1, order: [], position: 0, flipped: false, filePurpose: 'add' };
 let statusTimer;
 let updateRegistration;
 let pendingUpdate;
@@ -173,6 +173,7 @@ function startSession(previousLast = -1, saveSettings = true) {
   if (!state.deck) return;
   stopSpeech();
   if (saveSettings) persistPreferences();
+  state.sessionSpeed = state.deck.speed;
   state.order = shuffledIndices(state.deck.cards.length, previousLast);
   state.position = 0;
   state.flipped = false;
@@ -205,7 +206,7 @@ function renderCard() {
   $('progress-fill').style.width = `${(state.position + 1) / state.order.length * 100}%`;
   $('progress-track').setAttribute('aria-valuenow', String(state.position + 1));
   $('flashcard').setAttribute('aria-label', `Show ${state.deck.headers[1 - side].label} side`);
-  $('session-speed').textContent = `Voice speed: ${speedLabel(state.deck.speed)}`;
+  $('session-speed').textContent = `Voice speed: ${speedLabel(state.sessionSpeed)}`;
   $('speak-button').disabled = state.deck.languages[side] === 'off' || !('speechSynthesis' in window);
   $('previous-button').disabled = state.position === 0;
   $('read-full').hidden = true;
@@ -258,7 +259,7 @@ function speak() {
   stopSpeech();
   const utterance = new SpeechSynthesisUtterance(state.deck.cards[state.order[state.position]][side]);
   utterance.lang = lang;
-  utterance.rate = state.deck.speed || 1;
+  utterance.rate = state.sessionSpeed;
   speechSynthesis.speak(utterance);
 }
 function openFile(purpose = 'add') {
@@ -369,9 +370,8 @@ function wireEvents() {
   $('reshuffle').addEventListener('click', () => startSession(state.order.at(-1), false));
   $('review-last').addEventListener('click', () => { state.flipped = false; renderCard(); showView('session'); });
   $('session-speed').addEventListener('click', () => {
-    state.deck.speed = state.deck.speed === 1 ? 0.5 : state.deck.speed === 0.5 ? 1.5 : 1;
-    updateSpeedButtons();
-    persistPreferences(); renderCard(); speak();
+    state.sessionSpeed = state.sessionSpeed === 1 ? 0.5 : state.sessionSpeed === 0.5 ? 1.5 : 1;
+    renderCard(); speak();
   });
   let startX = null, startY = null;
   $('flashcard').addEventListener('touchstart', e => { startX = e.changedTouches[0].clientX; startY = e.changedTouches[0].clientY; }, { passive: true });
