@@ -1,4 +1,4 @@
-const CACHE = 'deckucate-v22';
+const CACHE = 'deckucate-v36';
 const CORE = ['./', './index.html', './app.js', './deck.js', './storage.js', './style.css', './manifest.webmanifest', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png', './vendor/compact/ui.css', './vendor/compact/ui.js'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting()));

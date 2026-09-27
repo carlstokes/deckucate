@@ -10,7 +10,7 @@ const languages = [
   ['es-ES', 'Spanish (Spain)'], ['es-MX', 'Spanish (Mexico)'],
   ['fr-FR', 'French'], ['de-DE', 'German'], ['it-IT', 'Italian']
 ];
-const state = { decks: [], deck: null, direction: 0, order: [], position: 0, flipped: false, filePurpose: 'add', settingsReturn: 'home' };
+const state = { decks: [], deck: null, direction: 0, order: [], position: 0, flipped: false, filePurpose: 'add' };
 let statusTimer;
 
 function showStatus(message) {
@@ -31,6 +31,9 @@ function textElement(tag, className, content) {
   return el;
 }
 function cardCount(n) { return `${n} ${n === 1 ? 'card' : 'cards'}`; }
+function directionLabel(deck, direction) {
+  return `${deck.headers[direction].label} → ${deck.headers[1 - direction].label}`;
+}
 function deckMark() {
   const mark = document.createElement('span');
   mark.className = 'deck-mark';
@@ -44,16 +47,33 @@ function deckMark() {
   return mark;
 }
 function deckButton(deck) {
+  const row = document.createElement('div');
+  row.className = 'home-deck';
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = 'home-deck';
+  button.className = 'home-deck-open';
+  button.setAttribute('aria-label', `Revise ${deck.name}, ${cardCount(deck.cards.length)}, ${directionLabel(deck, deck.direction ?? 0)}`);
   button.append(deckMark());
   const labels = document.createElement('span');
   labels.className = 'home-deck-text';
-  labels.append(textElement('strong', '', deck.name), textElement('small', '', `${cardCount(deck.cards.length)} · ${deck.headers[0].label} ↔ ${deck.headers[1].label}`));
-  button.append(labels, textElement('span', 'home-deck-arrow', '›'));
+  labels.append(textElement('strong', '', deck.name), textElement('small', '', `${cardCount(deck.cards.length)} · ${directionLabel(deck, deck.direction ?? 0)}`));
+  button.append(labels);
   button.addEventListener('click', () => chooseDeck(deck.id));
-  return button;
+  const settings = document.createElement('button');
+  settings.type = 'button';
+  settings.className = 'home-deck-settings';
+  settings.setAttribute('aria-label', `Settings for ${deck.name}`);
+  settings.title = `Settings for ${deck.name}`;
+  const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  icon.classList.add('icon');
+  icon.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', '#i-settings');
+  icon.append(use);
+  settings.append(icon);
+  settings.addEventListener('click', () => chooseDeck(deck.id, true));
+  row.append(button, settings);
+  return row;
 }
 function renderDecks() {
   $('home-deck-list').replaceChildren(...state.decks.map(deckButton));
@@ -91,10 +111,9 @@ function chooseDeck(id, showSettings = false) {
   state.direction = state.deck.direction ?? 0;
   $('setup-title').textContent = state.deck.name;
   updateSetupSummary();
-  const [a, b] = state.deck.headers.map(h => h.label);
   for (const button of document.querySelectorAll('.direction-option')) {
     const side = Number(button.dataset.side);
-    button.textContent = side === 0 ? `${a} → ${b}` : `${b} → ${a}`;
+    button.textContent = directionLabel(state.deck, side);
     button.classList.toggle('selected', side === state.direction);
     button.setAttribute('aria-pressed', String(side === state.direction));
   }
@@ -102,10 +121,10 @@ function chooseDeck(id, showSettings = false) {
     $(`lang-label-${i}`).textContent = `${state.deck.headers[i].label} side`;
     langOptions($(`lang-${i}`), state.deck.languages[i]);
   }
-  state.deck.speed = Number(state.deck.speed) < 1 ? 0.6 : Number(state.deck.speed) > 1 ? 1.4 : 1;
+  state.deck.speed = Number(state.deck.speed) < 1 ? 0.5 : Number(state.deck.speed) > 1 ? 1.5 : 1;
   updateSpeedButtons();
   renderDecks();
-  if (showSettings) { state.settingsReturn = 'home'; $('setup-back-label').textContent = 'All decks'; showView('setup'); }
+  if (showSettings) showView('setup');
   else startSession(-1, false);
 }
 async function persistPreferences() {
@@ -126,7 +145,7 @@ function startSession(previousLast = -1, saveSettings = true) {
   state.position = 0;
   state.flipped = false;
   $('session-title').textContent = state.deck.name;
-  $('session-direction').textContent = `${state.deck.headers[state.direction].label} → ${state.deck.headers[1 - state.direction].label}`;
+  $('session-direction').textContent = directionLabel(state.deck, state.direction);
   $('progress-track').setAttribute('aria-valuemax', String(state.order.length));
   renderCard();
   showView('session');
@@ -149,7 +168,7 @@ function renderCard() {
   $('card-side').textContent = state.deck.headers[side].label;
   $('card-text').textContent = card[side];
   $('card-text').classList.toggle('long', card[side].length > 85);
-  $('card-hint').textContent = state.flipped ? 'Tap to see the prompt' : 'Tap to reveal the answer';
+  $('card-hint').textContent = `Tap for ${state.deck.headers[1 - side].label}`;
   $('session-progress-text').textContent = `${state.position + 1} / ${state.order.length}`;
   $('progress-fill').style.width = `${(state.position + 1) / state.order.length * 100}%`;
   $('progress-track').setAttribute('aria-valuenow', String(state.position + 1));
@@ -183,7 +202,8 @@ function stopSpeech() { if ('speechSynthesis' in window) speechSynthesis.cancel(
 function nextCard() {
   stopSpeech();
   if (state.position + 1 >= state.order.length) {
-    $('complete-copy').textContent = `You reviewed all ${cardCount(state.order.length)} in ${state.deck.name}.`;
+    $('complete-title').textContent = state.deck.name;
+    $('complete-copy').textContent = `You reviewed all ${cardCount(state.order.length)}.`;
     showView('complete');
     return;
   }
@@ -266,16 +286,8 @@ function wireEvents() {
     applyTheme(next);
   });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if ((localStorage.getItem('deckucate-theme') || 'system') === 'system') applyTheme('system'); });
-  $('setup-back').addEventListener('click', () => {
-    if (state.settingsReturn === 'session') {
-      state.flipped = false;
-      $('session-direction').textContent = `${state.deck.headers[state.direction].label} → ${state.deck.headers[1 - state.direction].label}`;
-      renderCard();
-    }
-    showView(state.settingsReturn);
-  });
+  $('setup-back').addEventListener('click', () => showView('home'));
   $('session-back').addEventListener('click', () => { stopSpeech(); showView('home'); });
-  $('session-settings').addEventListener('click', () => { stopSpeech(); state.settingsReturn = 'session'; $('setup-back-label').textContent = 'Back to cards'; showView('setup'); });
   $('complete-back').addEventListener('click', () => showView('home'));
   $('refresh-deck').addEventListener('click', () => openFile('refresh'));
   $('remove-deck').addEventListener('click', async () => {
@@ -292,6 +304,8 @@ function wireEvents() {
       item.classList.toggle('selected', selected);
       item.setAttribute('aria-pressed', String(selected));
     }
+    state.deck.direction = state.direction;
+    renderDecks();
     persistPreferences();
   });
   for (const id of ['lang-0', 'lang-1']) $(id).addEventListener('change', persistPreferences);
@@ -316,7 +330,7 @@ function wireEvents() {
   $('reshuffle').addEventListener('click', () => startSession(state.order.at(-1), false));
   $('review-last').addEventListener('click', () => { state.flipped = false; renderCard(); showView('session'); });
   $('session-speed').addEventListener('click', () => {
-    state.deck.speed = state.deck.speed === 1 ? 0.6 : state.deck.speed === 0.6 ? 1.4 : 1;
+    state.deck.speed = state.deck.speed === 1 ? 0.5 : state.deck.speed === 0.5 ? 1.5 : 1;
     updateSpeedButtons();
     persistPreferences(); renderCard(); speak();
   });

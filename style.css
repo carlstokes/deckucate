@@ -95,3 +95,87 @@
 .session-header .page-nav{margin-bottom:0}
 .full-view .page-nav{margin-bottom:18px}
 @media(max-width:760px) and (max-height:760px){.session-header .page-nav{margin-bottom:8px}}
+
+/* Session controls belong to the card; the only control below it is voice speed. */
+.card-stack{margin-bottom:12px}
+.card-actions{position:absolute;z-index:2;inset:0;display:block;pointer-events:none}
+.card-actions wa-button{position:absolute;width:44px;height:44px;pointer-events:auto;touch-action:manipulation}
+.card-actions wa-button::part(base){width:44px;min-height:44px;height:44px;padding:0;border-radius:14px}
+.card-actions .icon{height:21px;width:21px}
+#speak-button{top:18px;right:18px}
+#previous-button{bottom:18px;left:18px}
+#next-button{bottom:18px;right:18px}
+.session-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.session-tools .quiet-link{margin-left:0;padding-left:0;text-align:left}
+.read-full{align-self:auto;margin:0;position:static}
+.card-hint{left:50%;transform:translateX(-50%);max-width:calc(100% - 144px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:760px){.card-stack{margin-bottom:10px}}
+@media(max-width:760px) and (max-height:760px){
+  .card-stack{margin-bottom:8px}
+  #speak-button{top:12px;right:12px}
+  #previous-button{bottom:12px;left:12px}
+  #next-button{bottom:12px;right:12px}
+}
+@media(max-width:420px) and (max-height:620px){.session-tools{display:flex}}
+
+/* A short, decorative celebration plays once when a session ends. */
+.complete-view{overflow:hidden}
+.complete-mark{position:relative}
+.celebration{position:absolute;inset:0;pointer-events:none}
+.celebration i{position:absolute;left:50%;top:50%;width:8px;height:12px;border-radius:3px;background:#e986ab;opacity:0;transform:translate(-50%,-50%);animation:confetti-burst 1.3s cubic-bezier(.18,.7,.26,1) both}
+.celebration i:nth-child(3n + 2){background:#e9ac5c;border-radius:50%;width:9px;height:9px}
+.celebration i:nth-child(3n){background:#8a74e7}
+.celebration i:nth-child(1){--x:-96px;--y:-72px;--r:-130deg}
+.celebration i:nth-child(2){--x:-63px;--y:-105px;--r:90deg}
+.celebration i:nth-child(3){--x:-15px;--y:-112px;--r:150deg}
+.celebration i:nth-child(4){--x:35px;--y:-101px;--r:45deg}
+.celebration i:nth-child(5){--x:86px;--y:-76px;--r:-85deg}
+.celebration i:nth-child(6){--x:110px;--y:-22px;--r:155deg}
+.celebration i:nth-child(7){--x:99px;--y:52px;--r:125deg}
+.celebration i:nth-child(8){--x:64px;--y:88px;--r:-145deg}
+.celebration i:nth-child(9){--x:8px;--y:105px;--r:60deg}
+.celebration i:nth-child(10){--x:-49px;--y:94px;--r:115deg}
+.celebration i:nth-child(11){--x:-105px;--y:45px;--r:-60deg}
+.celebration i:nth-child(12){--x:-115px;--y:-15px;--r:55deg}
+@keyframes confetti-burst{
+  0%{opacity:0;transform:translate(-50%,-50%) rotate(0) scale(.4)}
+  14%{opacity:1}
+  75%{opacity:1}
+  100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(var(--r)) scale(.7)}
+}
+@media(prefers-reduced-motion:reduce){.celebration i{animation:none;display:none}}
+
+/* Completion keeps the revision heading and progress, with an open result area. */
+.session-header h1,.complete-view h1{font-size:clamp(28px,3.2vw,36px)}
+.complete-view{max-width:760px}
+.complete-panel{height:330px;margin:34px 12px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.complete-panel h2{font-size:clamp(22px,3vw,28px);line-height:1.16;letter-spacing:-.035em;margin:0 0 8px}
+.complete-panel p{font-size:14px;line-height:1.45;margin:0;color:var(--muted)}
+.complete-panel .complete-mark{margin:0 auto 18px;width:60px;height:60px;border-radius:19px}
+.complete-actions{margin-top:0;justify-content:center;gap:11px}
+.complete-actions wa-button::part(base){min-height:54px}
+@media(max-width:760px){.complete-panel{height:320px;margin:28px 8px 10px}}
+@media(max-width:760px) and (max-height:760px){.session-header h1,.complete-view h1{font-size:clamp(26px,4vw,31px)}}
+@media(max-width:760px) and (max-height:760px){.complete-panel{height:clamp(220px,calc(100dvh - 410px),300px);margin:14px 8px 8px}}
+@media(max-width:420px) and (max-height:620px){.complete-panel{height:clamp(190px,calc(100dvh - 380px),240px)}}
+
+/* Give the progress bar some breathing room and keep the stack comfortably high. */
+.home-decks .deck-section-header{justify-content:flex-end}
+.session-stage{position:relative;top:-8px}
+.card-stack{margin-top:44px}
+.complete-stage{top:0;padding-top:0}
+.complete-panel{margin-top:0}
+@media(max-width:760px){.card-stack{margin-top:48px}}
+@media(max-width:760px) and (max-height:760px){.session-stage{top:-4px}.complete-stage{top:0}.card-stack{margin-top:32px}}
+@media(max-width:420px) and (max-height:620px){.session-stage{top:0}}
+
+/* Keep both choices on one row when their labels fit; stack them otherwise. */
+.direction-options{display:flex;flex-wrap:wrap}
+.direction-option{flex:1 0 max-content;max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.4;padding:12px}
+
+/* A deck opens from its main area; settings has its own target. */
+.home-deck{gap:8px;cursor:default}
+.home-deck-open{flex:1;min-width:0;min-height:52px;display:flex;align-items:center;gap:13px;padding:0;border:0;background:transparent;color:var(--ink);text-align:left;cursor:pointer}
+.home-deck-settings{width:44px;height:44px;flex:none;display:grid;place-items:center;border:0;border-radius:12px;background:transparent;color:var(--muted);cursor:pointer}
+.home-deck-settings:hover{background:var(--soft);color:var(--brand)}
+.home-deck-settings .icon{width:21px;height:21px}

@@ -21,6 +21,7 @@
     <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5m6 6-6-6 6-6"/></symbol>
     <symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Zm4 4a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12"/></symbol>
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.7 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.3-2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
   </svg>
   <div class="app-shell">
     <div class="content">
@@ -37,33 +38,39 @@
       <main id="main">
         <section id="home-view" class="view home-view" aria-labelledby="home-title">
           <div class="welcome"><div class="eyebrow" id="home-eyebrow">Your decks</div><h1 id="home-title">Choose a deck.</h1><p id="home-description">Start a revision session with the cards in random order.</p>
-            <div class="home-actions"><wa-button id="home-add" variant="brand" appearance="filled" size="l">Choose a CSV file</wa-button></div>
+            <div class="home-actions"><wa-button id="home-add" variant="brand" appearance="filled" size="l">Add deck</wa-button></div>
           </div>
-          <div class="home-decks" id="home-decks" hidden><div class="deck-section-header"><h2 class="section-title">Saved on this device</h2><button id="add-csv" class="text-action" type="button" aria-label="Add a deck from CSV"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add CSV</button></div><div id="home-deck-list" class="home-deck-grid"></div></div>
+          <div class="home-decks" id="home-decks" hidden><div class="deck-section-header"><button id="add-csv" class="text-action" type="button" aria-label="Add a deck from CSV"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add deck</button></div><div id="home-deck-list" class="home-deck-grid"></div></div>
           <div class="empty-hint" id="empty-hint"><span class="hint-mark"><svg><use href="#i-stack"/></svg></span><strong>Start with a deck</strong><span>Create a two-column CSV in a spreadsheet, then choose it here. <a href="./sample-spanish.csv" download>Download an example</a>.</span></div>
         </section>
         <section id="setup-view" class="view setup-view" aria-labelledby="setup-title" hidden>
           <div class="eyebrow">Deck settings</div><h1 id="setup-title"></h1>
-          <div class="page-nav"><button id="setup-back" class="back-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span id="setup-back-label">All decks</span></button></div>
+          <div class="page-nav"><button id="setup-back" class="back-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span>All decks</span></button></div>
           <p class="setup-summary" id="setup-summary"></p>
           <div class="setup-panel"><div class="field-heading">Show first</div><div class="direction-options" id="direction-options"><button type="button" class="direction-option selected" data-side="0" aria-pressed="true"></button><button type="button" class="direction-option" data-side="1" aria-pressed="false"></button></div>
             <div class="field-heading">Read aloud</div><div class="language-fields"><div><label id="lang-label-0" for="lang-0"></label><wa-select id="lang-0" aria-labelledby="lang-label-0" appearance="outlined" size="m"></wa-select></div><div><label id="lang-label-1" for="lang-1"></label><wa-select id="lang-1" aria-labelledby="lang-label-1" appearance="outlined" size="m"></wa-select></div></div>
-            <div class="field-heading speed-heading">Voice speed</div><div class="speed-options" id="speed-options" role="group" aria-label="Voice speed"><button type="button" data-rate="0.6" aria-pressed="false">Slow <span>0.6×</span></button><button type="button" data-rate="1" class="selected" aria-pressed="true">Normal <span>1×</span></button><button type="button" data-rate="1.4" aria-pressed="false">Fast <span>1.4×</span></button></div><p class="speed-help">Choose a speed to hear a preview.</p>
+            <div class="field-heading speed-heading">Voice speed</div><div class="speed-options" id="speed-options" role="group" aria-label="Voice speed"><button type="button" data-rate="0.5" aria-pressed="false">Slow <span>0.5×</span></button><button type="button" data-rate="1" class="selected" aria-pressed="true">Normal <span>1×</span></button><button type="button" data-rate="1.5" aria-pressed="false">Fast <span>1.5×</span></button></div><p class="speed-help">Choose a speed to hear a preview.</p>
           </div>
           <div class="setup-actions"><wa-button id="start-session" variant="brand" appearance="filled" size="l">Start revision <svg slot="end" class="icon"><use href="#i-arrow"/></svg></wa-button></div>
           <div class="setup-file-actions"><button id="refresh-deck" class="text-action" type="button"><svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Refresh from CSV</button><button id="remove-deck" class="text-action" type="button">Remove deck</button></div>
         </section>
         <section id="session-view" class="view session-view" aria-labelledby="session-title" hidden>
-          <div class="session-header"><div class="eyebrow">Revision session</div><h1 id="session-title"></h1><div class="page-nav"><button id="session-back" class="back-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span>All decks</span></button><button id="session-settings" class="text-action" type="button">Settings</button></div></div>
+          <div class="session-header"><div class="eyebrow">Revision session</div><h1 id="session-title"></h1><div class="page-nav"><button id="session-back" class="back-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span>All decks</span></button></div></div>
           <div class="session-stage"><div class="session-meta"><span id="session-direction"></span><span id="session-progress-text"></span></div><div class="progress-track" role="progressbar" id="progress-track" aria-label="Revision progress" aria-valuemin="0"><div class="progress-fill" id="progress-fill"></div></div>
-            <div class="card-stack"><button id="flashcard" class="flashcard" type="button" aria-label="Reveal other side of card"><span class="card-side" id="card-side"></span><span class="card-text" id="card-text"></span><span class="card-hint" id="card-hint">Tap to reveal answer</span></button></div>
-            <button id="read-full" class="text-action read-full" type="button" hidden>Read full card</button>
-            <div class="card-actions"><wa-button id="speak-button" appearance="outlined" size="l" aria-label="Read visible side aloud"><svg class="icon"><use href="#i-volume"/></svg></wa-button><wa-button id="previous-button" appearance="outlined" size="l" aria-label="Previous card" title="Previous card"><svg class="icon"><use href="#i-back"/></svg></wa-button><wa-button id="next-button" variant="brand" appearance="filled" size="l">Next card <svg slot="end" class="icon"><use href="#i-arrow"/></svg></wa-button></div>
-            <div class="session-footer"><span>Tap to flip · Swipe ← previous, → next</span><button type="button" id="session-speed" class="quiet-link">Voice speed: Normal</button></div>
+            <div class="card-stack"><button id="flashcard" class="flashcard" type="button" aria-label="Reveal other side of card"><span class="card-side" id="card-side"></span><span class="card-text" id="card-text"></span><span class="card-hint" id="card-hint"></span></button>
+              <div class="card-actions"><wa-button id="speak-button" appearance="outlined" size="l" aria-label="Read visible side aloud" title="Read visible side aloud"><svg class="icon"><use href="#i-volume"/></svg></wa-button><wa-button id="previous-button" appearance="outlined" size="l" aria-label="Previous card" title="Previous card"><svg class="icon"><use href="#i-back"/></svg></wa-button><wa-button id="next-button" variant="brand" appearance="filled" size="l" aria-label="Next card" title="Next card"><svg class="icon"><use href="#i-arrow"/></svg></wa-button></div>
+            </div>
+            <div class="session-tools"><button type="button" id="session-speed" class="quiet-link">Voice speed: Normal</button><button id="read-full" class="text-action read-full" type="button" hidden>Read full card</button></div>
           </div>
         </section>
         <section id="full-view" class="view full-view" aria-labelledby="full-title" hidden><div class="eyebrow" id="full-side"></div><h1 id="full-title">Full card</h1><div class="page-nav"><button id="full-back" class="back-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span>Back to card</span></button></div><div id="full-text" class="full-text"></div></section>
-        <section id="complete-view" class="view complete-view" aria-labelledby="complete-title" hidden><div class="eyebrow">Session complete</div><h1 id="complete-title">All cards reviewed.</h1><div class="page-nav"><button id="complete-back" class="back-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span>All decks</span></button></div><div class="complete-panel"><span class="complete-mark">✓</span><p id="complete-copy"></p><div class="complete-actions"><wa-button id="reshuffle" variant="brand" appearance="filled" size="l">Revise again</wa-button><wa-button id="review-last" appearance="outlined" size="l">Review last card</wa-button></div></div></section>
+        <section id="complete-view" class="view complete-view" aria-labelledby="complete-title" hidden>
+          <div class="session-header"><div class="eyebrow">Revision session</div><h1 id="complete-title"></h1><div class="page-nav"><button id="complete-back" class="back-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span>All decks</span></button></div></div>
+          <div class="session-stage complete-stage">
+            <div class="complete-panel"><span class="complete-mark">✓<span class="celebration" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></span><h2>Well done!</h2><p id="complete-copy"></p></div>
+            <div class="complete-actions"><wa-button id="reshuffle" variant="brand" appearance="filled" size="l">Revise again</wa-button><wa-button id="review-last" appearance="outlined" size="l">Review last card</wa-button></div>
+          </div>
+        </section>
       </main>
       <div id="status" class="status" role="status" aria-live="polite" hidden></div>
     </div>
