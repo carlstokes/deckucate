@@ -179,3 +179,10 @@
 .home-deck-settings{width:44px;height:44px;flex:none;display:grid;place-items:center;border:0;border-radius:12px;background:transparent;color:var(--muted);cursor:pointer}
 .home-deck-settings:hover{background:var(--soft);color:var(--brand)}
 .home-deck-settings .icon{width:21px;height:21px}
+
+/* Long deck names and side labels stay within the phone viewport. */
+.home-deck-grid{min-width:0;grid-template-columns:minmax(0,1fr)}
+.home-deck{min-width:0;max-width:100%}
+.home-deck-text strong,.home-deck-text small{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+.home-deck-text strong{line-height:1.3}
+.home-deck-text small{line-height:1.4}
