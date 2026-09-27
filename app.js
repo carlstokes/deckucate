@@ -12,6 +12,8 @@ const languages = [
 ];
 const state = { decks: [], deck: null, direction: 0, order: [], position: 0, flipped: false, filePurpose: 'add' };
 let statusTimer;
+let updateRegistration;
+let pendingUpdate;
 
 function showStatus(message) {
   $('status').textContent = message;
@@ -21,8 +23,38 @@ function showStatus(message) {
 }
 function showView(view) {
   for (const name of views) $(`${name}-view`).hidden = name !== view;
+  $('update-banner').hidden = !pendingUpdate || !['home', 'complete'].includes(view);
   window.scrollTo({ top: 0, behavior: 'instant' });
   if (view === 'session') requestAnimationFrame(fitCardText);
+}
+function offerUpdate(worker) {
+  if (!navigator.serviceWorker.controller) return;
+  pendingUpdate = worker;
+  $('update-banner').hidden = $('home-view').hidden && $('complete-view').hidden;
+}
+async function registerServiceWorker() {
+  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  let hadController = Boolean(navigator.serviceWorker.controller);
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController) { hadController = true; return; }
+    if (!reloading) { reloading = true; location.reload(); }
+  });
+  try {
+    const registration = await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
+    updateRegistration = registration;
+    if (registration.waiting) offerUpdate(registration.waiting);
+    registration.addEventListener('updatefound', () => {
+      const worker = registration.installing;
+      if (!worker) return;
+      worker.addEventListener('statechange', () => {
+        if (worker.state === 'installed') offerUpdate(registration.waiting || worker);
+      });
+    });
+    const check = () => registration.update().catch(() => {});
+    check();
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+  } catch { /* The cached app remains usable offline. */ }
 }
 function textElement(tag, className, content) {
   const el = document.createElement(tag);
@@ -277,6 +309,13 @@ function applyTheme(choice) {
   $('theme-moon').hidden = !dark;
 }
 function wireEvents() {
+  $('update-now').addEventListener('click', () => {
+    const worker = updateRegistration?.waiting || pendingUpdate;
+    if (!worker) return;
+    $('update-now').disabled = true;
+    $('update-now').textContent = 'Updating…';
+    worker.postMessage({ type: 'SKIP_WAITING' });
+  });
   $('home-add').addEventListener('click', () => openFile());
   $('add-csv').addEventListener('click', () => openFile());
   $('file-input').addEventListener('change', fileChosen);
@@ -362,6 +401,6 @@ async function init() {
   try { state.decks = (await listDecks()).sort((a, b) => b.loadedAt - a.loadedAt); }
   catch { showStatus('Decks cannot be saved on this device right now. You can still choose a CSV to revise.'); }
   renderDecks(); showView('home');
-  if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(() => {});
+  registerServiceWorker();
 }
 init();

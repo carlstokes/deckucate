@@ -72,6 +72,10 @@ Place the contents of this folder at the root of a GitHub repository. In the rep
 
 There is no application build step or backend to deploy. The small set of Web Awesome components used by the interface is bundled in `vendor/compact/` and served with the app, without a CDN. Web Awesome Core is MIT licensed; see `vendor/webawesome-LICENSE.md`. To upgrade those components or add more, regenerate the vendor bundle.
 
+### Updating an installed app
+
+Increase the cache version at the top of `sw.js` whenever you publish changes. While online, Deckucate checks for updates when it opens and when you return to it. Once the new files are ready, **Update now** appears on the deck list or finish page; selecting it reloads the app. It waits until the session is over to show the notice. Locally saved decks remain in browser storage. The first upgrade from an older release may need one manual reload to pick up this update control.
+
 ## Checks
 
 ```bash
