@@ -187,6 +187,18 @@
 .home-deck-text strong{line-height:1.3}
 .home-deck-text small{line-height:1.4}
 
+/* Give icon-only controls clear symbols and comfortable phone targets. */
+.theme-button{width:50px;height:50px}
+.theme-button svg{width:34px;height:34px;stroke-width:2.6}
+.home-deck-settings{width:48px;height:48px;background:transparent;color:var(--ink)}
+.home-deck-settings:focus-visible{background:var(--soft)}
+.home-deck-settings .icon{width:27px;height:27px;stroke-width:2.4}
+.card-actions .icon{width:25px;height:25px;stroke-width:2.3}
+
+/* Give long revision headings the entire content width and natural line breaks. */
+.session-header{width:100%}
+.session-header h1{width:100%;max-width:none;text-wrap:wrap}
+
 /* Offer installed-app updates only when revision is not in progress. */
 .update-banner{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:11;width:min(520px,calc(100vw - 32px));display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px 12px 18px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow);font-size:13px;font-weight:650}
 .update-banner button{flex:none;min-height:42px;padding:0 15px;border:0;border-radius:11px;background:var(--brand);color:var(--brand-text);font-weight:700;cursor:pointer}
