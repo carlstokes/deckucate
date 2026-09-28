@@ -259,8 +259,11 @@ button:disabled{opacity:.45;cursor:default}
 /* Titles keep one size across views and viewport heights; long deck names wrap. */
 .view h1{font-size:28px;white-space:normal;overflow-wrap:anywhere}
 
-/* Decks and cards act as controls rather than selectable text. */
-.home-deck,.home-deck *,.flashcard,.flashcard *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+/* App chrome is not reading text; the expanded card remains copyable. */
+.app-shell,.app-shell *{-webkit-user-select:none;user-select:none}
+#full-text,#status{-webkit-user-select:text;user-select:text}
+.app-shell select,.app-shell select option{-webkit-user-select:auto;user-select:auto}
+.app-shell button,.app-shell button *{-webkit-touch-callout:none}
 .home-deck-open,.home-deck-settings,.flashcard{-webkit-tap-highlight-color:transparent}
 @media(hover:none){.home-deck:active{border-color:var(--brand)}}
 @media(hover:hover) and (pointer:fine){
