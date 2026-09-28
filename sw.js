@@ -1,4 +1,4 @@
-const CACHE = 'deckucate-v55';
+const CACHE = 'deckucate-v56';
 const CORE = ['./', './index.html', './app.js', './deck.js', './storage.js', './style.css', './manifest.webmanifest', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE.map(path => new Request(path, { cache: 'reload' })))));

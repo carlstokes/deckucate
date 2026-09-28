@@ -241,7 +241,7 @@ button:disabled{opacity:.45;cursor:default}
 .speed-option{flex:1}
 .speed-option > span{flex-direction:column;gap:2px}
 .speed-option small{font-size:11px;font-weight:600;opacity:.8}
-.language-fields select{display:block;min-height:48px;padding:0 35px 0 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--ink);font-size:14px}
+.language-fields select{display:block;width:100%;height:48px;min-height:48px;padding:0 35px 0 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--ink);font-size:16px;line-height:normal}
 .card-control{display:grid;place-items:center;border:1px solid var(--border);background:var(--surface);color:var(--ink);cursor:pointer;box-shadow:0 2px 8px #0001}
 .card-control:active:not(:disabled){transform:scale(.96)}
 @media(hover:hover) and (pointer:fine){
@@ -253,5 +253,5 @@ button:disabled{opacity:.45;cursor:default}
 /* Keep sorting compact beside the infrequent Add deck action. */
 .home-decks .deck-section-header{justify-content:space-between;flex-wrap:wrap;gap:8px 12px}
 .deck-sort{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}
-.deck-sort select{min-height:44px;max-width:160px;padding:0 26px 0 10px;border:1px solid var(--border);border-radius:11px;background:var(--surface);color:var(--ink);font-size:12px;font-weight:700;cursor:pointer}
+.deck-sort select{height:48px;min-height:48px;max-width:170px;padding:0 26px 0 10px;border:1px solid var(--border);border-radius:11px;background:var(--surface);color:var(--ink);font-size:16px;line-height:normal;font-weight:700;cursor:pointer}
 @media(max-width:360px){.deck-sort{flex:1 1 100%}.deck-sort select{flex:1;max-width:none}.home-decks .deck-section-header{justify-content:flex-end}}
