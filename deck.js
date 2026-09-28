@@ -64,3 +64,26 @@ export function shuffledIndices(count, previousFirst = -1, random = Math.random)
   if (count > 1 && order[0] === previousFirst) [order[0], order[1]] = [order[1], order[0]];
   return order;
 }
+
+// Older saved decks only have loadedAt. Treat that as their added date.
+const addedAt = deck => deck.addedAt ?? deck.loadedAt ?? 0;
+const byName = (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }) || a.id.localeCompare(b.id);
+
+export function importDates(existing, now) {
+  return {
+    addedAt: existing ? addedAt(existing) || now : now,
+    ...(existing?.lastUsedAt ? { lastUsedAt: existing.lastUsedAt } : {})
+  };
+}
+
+export function sortDecks(decks, order) {
+  return [...decks].sort((a, b) => {
+    if (order === 'name-asc') return byName(a, b);
+    if (order === 'name-desc') return byName(b, a);
+    if (order === 'used') {
+      const used = (b.lastUsedAt || 0) - (a.lastUsedAt || 0);
+      if (used) return used;
+    }
+    return addedAt(b) - addedAt(a) || byName(a, b);
+  });
+}

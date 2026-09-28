@@ -249,3 +249,9 @@ button:disabled{opacity:.45;cursor:default}
   .card-control.primary:hover:not(:disabled){background:var(--brand);filter:brightness(1.08)}
 }
 @media(max-width:380px){.update-banner button{width:100%}}
+
+/* Keep sorting compact beside the infrequent Add deck action. */
+.home-decks .deck-section-header{justify-content:space-between;flex-wrap:wrap;gap:8px 12px}
+.deck-sort{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}
+.deck-sort select{min-height:44px;max-width:160px;padding:0 26px 0 10px;border:1px solid var(--border);border-radius:11px;background:var(--surface);color:var(--ink);font-size:12px;font-weight:700;cursor:pointer}
+@media(max-width:360px){.deck-sort{flex:1 1 100%}.deck-sort select{flex:1;max-width:none}.home-decks .deck-section-header{justify-content:flex-end}}

@@ -1,4 +1,4 @@
-import { parseDeckCsv, guessLanguage, shuffledIndices } from './deck.js';
+import { parseDeckCsv, guessLanguage, shuffledIndices, importDates, sortDecks } from './deck.js';
 import { listDecks, saveDeck, deleteDeck } from './storage.js';
 
 
@@ -9,7 +9,7 @@ const languages = [
   ['es-ES', 'Spanish (Spain)'], ['es-MX', 'Spanish (Mexico)'],
   ['fr-FR', 'French'], ['de-DE', 'German'], ['it-IT', 'Italian']
 ];
-const state = { decks: [], deck: null, direction: 0, sessionSpeed: 1, order: [], position: 0, flipped: false, filePurpose: 'add' };
+const state = { decks: [], deck: null, direction: 0, sessionSpeed: 1, order: [], position: 0, flipped: false, filePurpose: 'add', deckSort: 'used' };
 let statusTimer;
 let updateRegistration;
 let pendingUpdate;
@@ -107,7 +107,7 @@ function deckButton(deck) {
   return row;
 }
 function renderDecks() {
-  $('home-deck-list').replaceChildren(...state.decks.map(deckButton));
+  $('home-deck-list').replaceChildren(...sortDecks(state.decks, state.deckSort).map(deckButton));
   const hasDecks = state.decks.length > 0;
   $('home-decks').hidden = !hasDecks;
   $('empty-hint').hidden = hasDecks;
@@ -169,7 +169,10 @@ async function persistPreferences() {
 function startSession(previousLast = -1, saveSettings = true) {
   if (!state.deck) return;
   stopSpeech();
+  state.deck.lastUsedAt = Date.now();
   if (saveSettings) persistPreferences();
+  else saveDeck(state.deck).catch(() => showStatus('Could not save recent use on this device.'));
+  renderDecks();
   state.sessionSpeed = state.deck.speed;
   state.order = shuffledIndices(state.deck.cards.length, previousLast);
   state.position = 0;
@@ -274,8 +277,9 @@ async function fileChosen(event) {
     }
     const existing = state.decks.find(d => d.id === id);
     if (existing && state.filePurpose !== 'refresh' && !confirm(`Replace the saved deck “${existing.name}” with this file?`)) return;
+    const importedAt = Date.now();
     const deck = {
-      ...parsed, id, loadedAt: Date.now(),
+      ...parsed, id, loadedAt: importedAt, ...importDates(existing, importedAt),
       languages: existing?.languages || parsed.headers.map(h => h.lang || guessLanguage(h.label)),
       direction: existing?.direction ?? 0, speed: existing?.speed || 1
     };
@@ -311,6 +315,11 @@ function wireEvents() {
   });
   $('home-add').addEventListener('click', () => openFile());
   $('add-csv').addEventListener('click', () => openFile());
+  $('deck-sort').addEventListener('change', () => {
+    state.deckSort = $('deck-sort').value;
+    localStorage.setItem('deckucate-deck-sort', state.deckSort);
+    renderDecks();
+  });
   $('file-input').addEventListener('change', fileChosen);
   $('theme-button').addEventListener('click', () => {
     const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
@@ -380,11 +389,14 @@ function wireEvents() {
   window.addEventListener('resize', () => { if (!$('session-view').hidden) requestAnimationFrame(fitCardText); });
 }
 async function init() {
+  const savedSort = localStorage.getItem('deckucate-deck-sort');
+  state.deckSort = ['used', 'added', 'name-asc', 'name-desc'].includes(savedSort) ? savedSort : 'used';
+  $('deck-sort').value = state.deckSort;
   const theme = localStorage.getItem('deckucate-theme') || 'system';
   applyTheme(theme);
   wireEvents();
   if (!('speechSynthesis' in window)) $('speak-button').disabled = true;
-  try { state.decks = (await listDecks()).sort((a, b) => b.loadedAt - a.loadedAt); }
+  try { state.decks = await listDecks(); }
   catch { showStatus('Decks cannot be saved on this device right now. You can still choose a CSV to revise.'); }
   renderDecks(); showView('home');
   registerServiceWorker();

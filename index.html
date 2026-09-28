@@ -40,7 +40,7 @@
           <div class="welcome"><div class="eyebrow" id="home-eyebrow">Your decks</div><h1 id="home-title">Choose a deck.</h1><p id="home-description">Start a revision session with the cards in random order.</p>
             <div class="home-actions"><button id="home-add" class="text-action" type="button"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add deck</button></div>
           </div>
-          <div class="home-decks" id="home-decks" hidden><div class="deck-section-header"><button id="add-csv" class="text-action" type="button"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add deck</button></div><div id="home-deck-list" class="home-deck-grid"></div></div>
+          <div class="home-decks" id="home-decks" hidden><div class="deck-section-header"><label class="deck-sort" for="deck-sort">Sort by <select id="deck-sort"><option value="used">Recently used</option><option value="added">Recently added</option><option value="name-asc">Name A–Z</option><option value="name-desc">Name Z–A</option></select></label><button id="add-csv" class="text-action" type="button"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add deck</button></div><div id="home-deck-list" class="home-deck-grid"></div></div>
           <div class="empty-hint" id="empty-hint"><span class="hint-mark"><svg><use href="#i-stack"/></svg></span><strong>Need a starting point?</strong><span><a href="./sample-spanish.csv" download>Download an example CSV</a>, edit its two columns, then add it here.</span></div>
         </section>
         <section id="setup-view" class="view setup-view" aria-labelledby="setup-title" hidden>
