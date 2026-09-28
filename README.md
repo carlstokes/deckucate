@@ -30,4 +30,4 @@ The files in this folder can be served directly as a static website. For local d
 
 To publish, put these files at the root of a GitHub repository and enable GitHub Pages for the `main` branch and root folder. The app has no build step. HTTPS from GitHub Pages allows it to be installed and used offline after it has loaded. When publishing a new version, increase the cache version in `sw.js` so installed copies can pick up the update.
 
-The small Web Awesome interface bundle is included in `vendor/compact/`; its MIT licence is in `vendor/webawesome-LICENSE.md`.
+The interface uses plain HTML, CSS, and JavaScript; publishing the files needs no build tools.

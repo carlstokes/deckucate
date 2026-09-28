@@ -1,4 +1,3 @@
-import './vendor/compact/ui.js';
 import { parseDeckCsv, guessLanguage, shuffledIndices } from './deck.js';
 import { listDecks, saveDeck, deleteDeck } from './storage.js';
 
@@ -119,14 +118,14 @@ function renderDecks() {
 }
 function langOptions(select, value) {
   select.replaceChildren(...languages.map(([code, label]) => {
-    const option = document.createElement('wa-option');
+    const option = document.createElement('option');
     option.value = code;
     option.textContent = label;
     return option;
   }));
   // A recognised code outside the short list should still travel with the CSV.
   if (value && !languages.some(([code]) => code.toLowerCase() === value.toLowerCase())) {
-    const option = document.createElement('wa-option');
+    const option = document.createElement('option');
     option.value = value;
     option.textContent = value;
     select.append(option);
@@ -143,11 +142,9 @@ function chooseDeck(id, showSettings = false) {
   state.direction = state.deck.direction ?? 0;
   $('setup-title').textContent = state.deck.name;
   updateSetupSummary();
-  for (const button of document.querySelectorAll('.direction-option')) {
-    const side = Number(button.dataset.side);
-    button.textContent = directionLabel(state.deck, side);
-    button.classList.toggle('selected', side === state.direction);
-    button.setAttribute('aria-pressed', String(side === state.direction));
+  for (const radio of $('direction-options').querySelectorAll('input')) {
+    radio.nextElementSibling.textContent = directionLabel(state.deck, Number(radio.value));
+    radio.checked = Number(radio.value) === state.direction;
   }
   for (let i = 0; i < 2; i++) {
     $(`lang-label-${i}`).textContent = `${state.deck.headers[i].label} side`;
@@ -214,11 +211,8 @@ function renderCard() {
 }
 function speedLabel(speed) { return Number(speed) < 1 ? 'Slow' : Number(speed) > 1 ? 'Fast' : 'Normal'; }
 function updateSpeedButtons() {
-  for (const button of document.querySelectorAll('[data-rate]')) {
-    const selected = Number(button.dataset.rate) === Number(state.deck?.speed);
-    button.classList.toggle('selected', selected);
-    button.setAttribute('aria-pressed', String(selected));
-  }
+  const chosen = String(state.deck?.speed || 1);
+  for (const radio of $('speed-options').querySelectorAll('input')) radio.checked = radio.value === chosen;
 }
 function previewSpeed() {
   if (!state.deck || !('speechSynthesis' in window)) return;
@@ -298,16 +292,14 @@ async function fileChosen(event) {
 function applyTheme(choice) {
   const systemDark = matchMedia('(prefers-color-scheme: dark)').matches;
   const dark = choice === 'dark' || (choice === 'system' && systemDark);
-  document.documentElement.classList.toggle('wa-dark', dark);
-  document.documentElement.classList.toggle('wa-light', !dark);
+  document.documentElement.classList.toggle('dark', dark);
   document.querySelector('meta[name="theme-color"]').content = dark ? '#171721' : '#faf9fe';
   const current = dark ? 'Dark' : 'Light';
   const next = dark ? 'Light' : 'Dark';
   const source = choice === 'system' ? ' (device setting)' : '';
   $('theme-button').setAttribute('aria-label', `${current} appearance${source}. Switch to ${next}`);
+  $('theme-label').textContent = `${current} appearance${source}. Switch to ${next}`;
   $('theme-button').title = `${current}${source} · switch to ${next}`;
-  $('theme-sun').hidden = dark;
-  $('theme-moon').hidden = !dark;
 }
 function wireEvents() {
   $('update-now').addEventListener('click', () => {
@@ -321,7 +313,7 @@ function wireEvents() {
   $('add-csv').addEventListener('click', () => openFile());
   $('file-input').addEventListener('change', fileChosen);
   $('theme-button').addEventListener('click', () => {
-    const next = document.documentElement.classList.contains('wa-dark') ? 'light' : 'dark';
+    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
     localStorage.setItem('deckucate-theme', next);
     applyTheme(next);
   });
@@ -337,21 +329,15 @@ function wireEvents() {
     state.decks = state.decks.filter(d => d.id !== state.deck.id);
     state.deck = null; renderDecks(); showView('home');
   });
-  for (const button of document.querySelectorAll('.direction-option')) button.addEventListener('click', () => {
-    state.direction = Number(button.dataset.side);
-    for (const item of document.querySelectorAll('.direction-option')) {
-      const selected = item === button;
-      item.classList.toggle('selected', selected);
-      item.setAttribute('aria-pressed', String(selected));
-    }
+  $('direction-options').addEventListener('change', () => {
+    state.direction = Number($('direction-options').querySelector('input:checked').value);
     state.deck.direction = state.direction;
     renderDecks();
     persistPreferences();
   });
   for (const id of ['lang-0', 'lang-1']) $(id).addEventListener('change', persistPreferences);
-  for (const button of document.querySelectorAll('[data-rate]')) button.addEventListener('click', () => {
-    state.deck.speed = Number(button.dataset.rate);
-    updateSpeedButtons();
+  $('speed-options').addEventListener('change', () => {
+    state.deck.speed = Number($('speed-options').querySelector('input:checked').value);
     persistPreferences();
     previewSpeed();
   });
@@ -387,7 +373,7 @@ function wireEvents() {
   }, { passive: false });
   document.addEventListener('keydown', e => {
     if (!$('full-view').hidden && e.key === 'Escape') { e.preventDefault(); showView('session'); return; }
-    if ($('session-view').hidden || e.target.closest('wa-select')) return;
+    if ($('session-view').hidden || e.target.closest('select')) return;
     if (e.key === 'ArrowRight') { e.preventDefault(); nextCard(); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); previousCard(); }
   });
