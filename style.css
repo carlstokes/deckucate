@@ -225,7 +225,7 @@ button:disabled{opacity:.45;cursor:default}
 .action-button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 20px;border:1px solid var(--border);border-radius:13px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:700;cursor:pointer}
 .action-button:hover{background:var(--soft)}
 .action-button.primary,.card-control.primary{border-color:var(--brand);background:var(--brand);color:var(--brand-text)}
-.action-button.primary:hover,.card-control.primary:hover{filter:brightness(1.08)}
+.action-button.primary:hover{filter:brightness(1.08)}
 .choice-group{min-width:0;padding:0;margin:0;border:0}
 .choice-group legend{padding:0}
 .direction-options{margin-bottom:32px}
@@ -242,5 +242,9 @@ button:disabled{opacity:.45;cursor:default}
 .speed-option small{font-size:11px;font-weight:600;opacity:.8}
 .language-fields select{display:block;min-height:48px;padding:0 35px 0 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--ink);font-size:14px}
 .card-control{display:grid;place-items:center;border:1px solid var(--border);background:var(--surface);color:var(--ink);cursor:pointer;box-shadow:0 2px 8px #0001}
-.card-control:hover:not(:disabled){background:var(--soft)}
+.card-control:active:not(:disabled){transform:scale(.96)}
+@media(hover:hover) and (pointer:fine){
+  .card-control:hover:not(:disabled){background:var(--soft)}
+  .card-control.primary:hover:not(:disabled){background:var(--brand);filter:brightness(1.08)}
+}
 @media(max-width:380px){.update-banner button{width:100%}}
